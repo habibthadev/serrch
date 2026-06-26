@@ -17,7 +17,7 @@ export function formatOutput(output: ResearchOutput): string {
   if (output.sources.length > 0) {
     lines.push("**Sources:**");
     for (const source of output.sources) {
-      const urlPart = source.url ? ` (${source.url})` : "";
+      const urlPart = source.url ? ` <${source.url}>` : "";
       lines.push(`- ${source.title}${urlPart}`);
     }
     lines.push("");

@@ -34,7 +34,22 @@ describe("formatOutput", () => {
 
     const result = formatOutput(output);
     expect(result).toContain("- No URL Source");
-    expect(result).not.toContain("()");
+    expect(result).not.toContain("<");
+  });
+
+  it("wraps URLs in angle brackets to prevent Markdown parsing", () => {
+    const output: ResearchOutput = {
+      summary: "Test",
+      keyPoints: ["Point"],
+      sources: [
+        { title: "Wiki", url: "https://en.wikipedia.org/wiki/GNI_(nominal)", relevance: "high" },
+      ],
+      topic: "Test",
+      confidence: "high",
+    };
+
+    const result = formatOutput(output);
+    expect(result).toContain("- Wiki <https://en.wikipedia.org/wiki/GNI_(nominal)>");
   });
 });
 
