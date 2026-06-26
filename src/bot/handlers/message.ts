@@ -10,7 +10,7 @@ export async function handleMessage(ctx: Context) {
 
   if (!text || !userId || !chatId) return;
 
-  await ctx.replyWithChatAction("typing");
+  const statusMsg = await ctx.reply("Researching...");
 
   try {
     const result = await runResearchAgent({
@@ -22,8 +22,18 @@ export async function handleMessage(ctx: Context) {
     const formatted = formatOutput(result);
 
     if (formatted.length <= 4096) {
-      await ctx.reply(formatted, { parse_mode: "Markdown" });
+      await ctx.api.editMessageText(
+        chatId,
+        statusMsg.message_id,
+        formatted,
+        { parse_mode: "Markdown" }
+      );
     } else {
+      await ctx.api.editMessageText(
+        chatId,
+        statusMsg.message_id,
+        "Research complete — here are the full results:"
+      );
       const chunks = chunkMessage(formatted, 4096);
       for (const chunk of chunks) {
         await ctx.reply(chunk, { parse_mode: "Markdown" });
@@ -31,6 +41,10 @@ export async function handleMessage(ctx: Context) {
     }
   } catch (error) {
     logger.error({ error, userId, chatId }, "Agent failed");
-    await ctx.reply("Research failed. Try again or rephrase your query.");
+    await ctx.api.editMessageText(
+      chatId,
+      statusMsg.message_id,
+      "Research failed. Try again or rephrase your query."
+    );
   }
 }
