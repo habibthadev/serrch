@@ -15,16 +15,26 @@ export const searchWeb = tool({
   }),
   execute: async ({ query, limit }) => {
     logger.info({ query, limit }, "Searching web");
-    const result = await firecrawl.search(query, { limit });
 
-    if (!result.success) {
-      throw new Error(`Firecrawl search failed for: ${query}`);
+    try {
+      const result = await firecrawl.search(query, { limit });
+
+      if (!result.success) {
+        logger.warn({ query, error: result.error }, "Firecrawl search failed");
+        return { ok: false, error: `Search failed for: ${query}` };
+      }
+
+      return {
+        ok: true,
+        results: result.data.map((r) => ({
+          url: r.url,
+          title: r.title,
+          content: r.markdown,
+        })),
+      };
+    } catch (err) {
+      logger.error({ query, err }, "Firecrawl search threw");
+      return { ok: false, error: `Search error: ${(err as Error).message}` };
     }
-
-    return result.data.map((r) => ({
-      url: r.url,
-      title: r.title,
-      content: r.markdown,
-    }));
   },
 });

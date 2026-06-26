@@ -14,14 +14,29 @@ export const crawlUrl = tool({
   }),
   execute: async ({ url }) => {
     logger.info({ url }, "Crawling URL");
-    const result = await firecrawl.scrapeUrl(url, {
-      formats: ["markdown"],
-    });
 
-    if (!result.success) {
-      throw new Error(`Firecrawl failed to scrape: ${url}`);
+    try {
+      const result = await firecrawl.scrapeUrl(url, {
+        formats: ["markdown"],
+      });
+
+      if (!result.success) {
+        logger.warn({ url, error: result.error }, "Firecrawl scrape failed");
+        return {
+          ok: false,
+          error: `Failed to scrape URL. The site may block automated requests.`,
+          url,
+        };
+      }
+
+      return { ok: true, content: result.markdown, url };
+    } catch (err) {
+      logger.error({ url, err }, "Firecrawl scrape threw");
+      return {
+        ok: false,
+        error: `Could not access URL: ${(err as Error).message}`,
+        url,
+      };
     }
-
-    return { content: result.markdown, url };
   },
 });
