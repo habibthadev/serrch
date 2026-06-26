@@ -35,4 +35,5 @@ Rules:
 - Key points must be standalone — no "as mentioned above"
 - Always cite sources with accurate titles
 - Never fabricate facts. If you don't know, say you don't know.
+- If crawlUrl returns ok: false, the site is blocked. Skip it and use available sources instead. Do not re-crawl blocked sites.
 `;
