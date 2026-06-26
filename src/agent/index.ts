@@ -32,7 +32,7 @@ export async function runResearchAgent({
       searchWeb,
       recallMemory: recallMemory(telegramUserId),
     },
-    maxSteps: 5,
+    maxSteps: 8,
   });
 
   const text = result.text;
