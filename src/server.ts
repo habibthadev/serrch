@@ -8,12 +8,14 @@ import {
   historyCommand,
   clearCommand,
 } from "./bot/handlers/commands.js";
+import { dedupUpdates } from "./bot/middleware/dedup.js";
 import { rateLimit } from "./bot/middleware/rateLimit.js";
 import { botLogger } from "./bot/middleware/logger.js";
 import { connectDB, setupGracefulShutdown, disconnectDB } from "./db/connection.js";
 import { env } from "./schemas/env.js";
 import { logger } from "./lib/logger.js";
 
+bot.use(dedupUpdates);
 bot.use(botLogger);
 bot.use(rateLimit);
 
