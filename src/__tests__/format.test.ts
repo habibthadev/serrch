@@ -37,19 +37,20 @@ describe("formatOutput", () => {
     expect(result).not.toContain("<");
   });
 
-  it("wraps URLs in angle brackets to prevent Markdown parsing", () => {
+  it("encodes underscores in URLs to prevent Markdown italics", () => {
     const output: ResearchOutput = {
       summary: "Test",
       keyPoints: ["Point"],
       sources: [
-        { title: "Wiki", url: "https://en.wikipedia.org/wiki/GNI_(nominal)", relevance: "high" },
+        { title: "Wiki", url: "https://en.wikipedia.org/wiki/GNI_(nominal)_per_capita", relevance: "high" },
       ],
       topic: "Test",
       confidence: "high",
     };
 
     const result = formatOutput(output);
-    expect(result).toContain("- Wiki <https://en.wikipedia.org/wiki/GNI_(nominal)>");
+    expect(result).toContain("%5Fper%5Fcapita");
+    expect(result).not.toContain("_per_capita");
   });
 });
 
